@@ -11,6 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Dialog from '@material-ui/core/Dialog';
+import Box from '@material-ui/core/Box';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import { actionLoadImages } from '../../containers/App/actions';
 import { connect } from 'react-redux';
@@ -34,6 +35,12 @@ const useStyles = makeStyles(theme => ({
         margin: '0 auto 0',
         display: 'block',
         width: '75%'
+    },
+    box: {
+        padding: theme.spacing(2),
+        margin: '0 auto 0',
+        display: 'block',
+        width: '50%'
     }
 }));
 
@@ -89,13 +96,14 @@ export function ImageFeed({dispatch, user, isLoading, isError, images}) {
                     </Toolbar>
                     </AppBar>
                      <DialogTitle id="form-dialog-title">{currImage.title}</DialogTitle>
-                     <Container>
-                         <Typography variant="h5">Description: {currImage.description}</Typography>
-                         <Typography variant="h5">Submitted by: {currImage.user_name}</Typography>
-                         <Typography gutterBottom>{`Submitted on ${(new Date(currImage.created_on).toLocaleDateString())} at ${(new Date(currImage.created_on).toLocaleTimeString())}`}</Typography>
-                         
+                     <Container> 
                          <Paper>
                             <img className={classes.image} src={currImage.image} alt={currImage.title} />
+                            <Box className={classes.box}>
+                                <Typography align="center" variant="h6"><em>{currImage.description}</em></Typography>
+                                <Typography align="center" variant="h6">Author: {currImage.user_name}</Typography>
+                                <Typography align="center" gutterBottom>{`Submitted on ${(new Date(currImage.created_on).toLocaleDateString())} at ${(new Date(currImage.created_on).toLocaleTimeString())}`}</Typography>
+                            </Box>
                          </Paper>
                      </Container>
             </Dialog> 

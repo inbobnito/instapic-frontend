@@ -6,13 +6,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
 import { signInUser } from '../../containers/App/actions';
 import { connect } from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
 }));
 
-export function LoginForm({dispatch}) {
+export function LoginForm({dispatch, isError, isLoading}) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     let uname;
@@ -46,8 +48,10 @@ export function LoginForm({dispatch}) {
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Sign In</DialogTitle>
                 <DialogContent>
+                    {isLoading && <CircularProgress className={classes.progress} /> }
+                    {isError && <Typography align="center" variant="h5">An error occured.</Typography>}
                     <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                        <TextField
+                    {!isLoading && <TextField
                             variant="outlined"
                             onChange={getUserName}
                             margin="normal"
@@ -58,8 +62,8 @@ export function LoginForm({dispatch}) {
                             name="username"
                             autoComplete="username"
                             autoFocus
-                        />
-                        <TextField
+                        />}
+                        {!isLoading && <TextField
                             variant="outlined"
                             onChange={getPass}
                             margin="normal"
@@ -70,8 +74,8 @@ export function LoginForm({dispatch}) {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                        />
-                        <Button
+                        />}
+                        {!isLoading && <Button
                             type="submit"
                             fullWidth
                             variant="contained"
@@ -79,7 +83,7 @@ export function LoginForm({dispatch}) {
                             className={classes.submit}
                         >
                             Sign In
-                        </Button>
+                        </Button>}
                     </form>
                 </DialogContent>
                 <DialogActions>
@@ -92,4 +96,10 @@ export function LoginForm({dispatch}) {
     )
 }
 
-export default connect()(LoginForm);
+const mapStateToProps = state => ({
+    isLoading: state.appReducer.loading,
+    isError: state.appReducer.error,
+    username: state.appReducer.username
+});
+
+export default connect(mapStateToProps)(LoginForm);

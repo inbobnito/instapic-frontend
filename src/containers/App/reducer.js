@@ -17,6 +17,7 @@ const appReducer = (state = initialState, action) => {
     switch (action.type) {
         case REGISTER:
         case LOGIN:
+            return Object.assign({}, state, {loading: true, error: false, didUpload: false, userNotFound: false});
         case REQUEST_IMAGE:
             return Object.assign({}, state, {loading: true, error: false, images: [], didUpload: false, userNotFound: false});
 

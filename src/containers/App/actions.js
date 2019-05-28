@@ -50,7 +50,6 @@ export function registerUser(data) {
             })
             .then(response => response.json())
             .then(response => {
-                console.log(response);
                 if (response.status === 'success') {
                     dispatch(signInUser({user_name: data.username, password: data.password}))
                 } else {
@@ -86,12 +85,12 @@ export function signInUser(data) {
                 authHelper.setToken(response.Authorization);
                 return dispatch(loggedIn({user_name: data.user_name}));
             } else {
-                return dispatch(processError);
+                return dispatch(processError(response));
             }
         })
         .catch(error => {
             console.error(error);
-            return dispatch(processError);
+            return dispatch(processError());
         });
     }
 }

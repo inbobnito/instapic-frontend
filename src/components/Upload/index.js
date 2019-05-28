@@ -74,7 +74,7 @@ export function Upload({dispatch, isLoading, isError, imageData, selectedFile, f
 
         <pre className={classes.preview}>
             File selected: {selectedFile ? selectedFile : 'no file selected'}<br /> 
-            <img className={classes.imgPreview} width="75%" src={imageData} alt="preview" />
+            {imageData && <img className={classes.imgPreview} width="75%" src={imageData} alt="preview" /> }
         </pre>
 
         {didUpload && <span>
