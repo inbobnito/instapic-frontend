@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -6,22 +6,40 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { connect } from 'react-redux';
+import { registerUser } from '../../containers/App/actions';
 
 const useStyles = makeStyles(theme => ({
     signupButton: {
         marginTop: theme.spacing(2)
-    }
+    },
+    progress: {
+        margin: theme.spacing(2),
+      },
 }));
 
-export default function RegistrationForm() {
+const RegistrationForm = ({dispatch, isLoading, isError, username}) => {
     const classes = useStyles();
-
     const [open, setOpen] = React.useState(false);
+
+    let uname;
+    let pass;
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        dispatch(registerUser({username: uname, password: pass}));
+    };
+
+    function getPass(event) {
+        pass = event.target.value;
+    }
+
+    function getUserName(event) {
+        uname = event.target.value;
+    }
 
     function onOpenRegistrationDialogue() {
       setOpen(true);
@@ -31,6 +49,12 @@ export default function RegistrationForm() {
       setOpen(false);
     }
 
+    useEffect(() => {
+        if (username) {
+            setOpen(false);
+        }
+    });
+
     return (
         <span>
             <Button color="inherit" onClick={onOpenRegistrationDialogue}>Sign Up</Button>
@@ -38,44 +62,25 @@ export default function RegistrationForm() {
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Sign Up</DialogTitle>
                 <DialogContent>
-                    <form className={classes.form} noValidate>
+                    {isLoading && <CircularProgress className={classes.progress} /> }
+                    {isError && <Typography align="center" variant="h5">An error occured.</Typography>}
+                    {!isLoading && <form className={classes.form} noValidate onSubmit={handleSubmit}> 
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12}>
                         <TextField
-                            autoComplete="fname"
-                            name="firstName"
+                            onChange={getUserName}
                             variant="outlined"
                             required
                             fullWidth
-                            id="firstName"
-                            label="First Name"
-                            autoFocus
-                        />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="lastName"
-                            label="Last Name"
-                            name="lastName"
-                            autoComplete="lname"
+                            id="username"
+                            label="User Name"
+                            name="username"
+                            autoComplete="username"
                         />
                         </Grid>
                         <Grid item xs={12}>
                         <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                        />
-                        </Grid>
-                        <Grid item xs={12}>
-                        <TextField
+                            onChange={getPass}
                             variant="outlined"
                             required
                             fullWidth
@@ -98,7 +103,7 @@ export default function RegistrationForm() {
                             Sign Up
                         </Button>
                     </div>
-                    </form>
+                    </form> }
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
@@ -109,3 +114,11 @@ export default function RegistrationForm() {
         </span>
     )
 }
+
+const mapStateToProps = state => ({
+        isLoading: state.appReducer.loading,
+        isError: state.appReducer.error,
+        username: state.appReducer.username
+});
+  
+export default connect(mapStateToProps)(RegistrationForm);

@@ -1,41 +1,69 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import TextField from '@material-ui/core/TextField';
 import LoginForm from '../LoginForm';
 import RegistrationForm from '../RegistrationForm';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import { connect } from 'react-redux';
+import { logout } from '../../containers/App/actions';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@material-ui/core/Link';
 
-const useStyles = makeStyles(theme => ({
-    hero: {
-        margin: theme.spacing(5)
-    }
-}));
-
-export default function UserPanel() {
-    const classes = useStyles();
-
-    const [open, setOpen] = React.useState(false);
-
-    function onOpenLoginDiaglogue() {
-        console.log("setting open");
-      setOpen(true);
+export function UserPanel({dispatch, username}) {
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+  
+    function handleMenu(event) {
+      setAnchorEl(event.currentTarget);
     }
   
     function handleClose() {
-      setOpen(false);
+      setAnchorEl(null);
+    }
+
+    function handleLogout() {
+        dispatch(logout());
     }
 
     return (
         <div>
-           <LoginForm />
-           <RegistrationForm />
+           {!username && <LoginForm />}
+           {!username && <RegistrationForm />}
+           {username && <span>
+               <IconButton color="inherit" onClick={handleMenu}>
+                <AccountCircle />
+              </IconButton>
+              <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>
+                <Link color="inherit" component={RouterLink} to={`/user/${username}`}>My Pics</Link>
+              </MenuItem>
+              <MenuItem onClick={handleClose}>
+                <Link color="inherit" component={RouterLink} to='/image'>Upload Pic</Link>
+              </MenuItem>
+            </Menu>
+            </span>}
+           {username && <Button color="inherit" onClick={handleLogout}>Logout</Button>}
         </div>
     )
 }
+
+const mapStateToProps = state => ({
+    username: state.appReducer.username
+});
+
+export default connect(mapStateToProps)(UserPanel);

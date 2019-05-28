@@ -1,57 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
-
-const mockData = [
-    {
-        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ72TppF9ugpGnL-ODbuIAze-R3vTq3F98eiS7NbwTpELJn-JmPFw',
-        title: 'pls',
-        author: 'dogelover95',
-        cols: 2
-    },
-    {
-        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGB-02W3X8-fFs84R5a-IT1d-cODl7pJhjzjlHYHh10E0T9TuDvg',
-        title: 'Doge swag',
-        author: 'monetizeAMeme',
-        cols: 1
-    },
-    {
-        img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQO0_ZsuQW5TqKcSamzbUjnHf6YZKgvtA4WwBLQbhQ4jq3cfWnA',
-        title: 'Doge loaf',
-        author: 'dogelover95',
-        cols: 1
-    },
-
-    {
-        img: 'https://i.kym-cdn.com/entries/icons/mobile/000/013/564/doge.jpg',
-        title: 'Classic doge',
-        author: 'wowman48',
-        cols: 2
-    },
-    {
-        img: 'https://pics.me.me/fat-doge-8386016.png',
-        title: 'Fat doge',
-        author: 'dogelover95',
-        cols: 2
-    },
-    {
-        img: 'https://pics.me.me/if-a-doge-which-pant-or-much-choice-werd-19380127.png',
-        title: 'Doge',
-        author: 'dogelover95',
-        cols: 1
-    },
-
-    {
-        img: 'https://static1.squarespace.com/static/5a2cbecb90bade51df5b8eea/t/5ba2a41e6d2a733c38d2c0c6/1537385514393/Doge.PNG',
-        title: 'Doge Coin',
-        author: 'dogelover95',
-        cols: 1
-    },
-];
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import CloseIcon from '@material-ui/icons/Close';
+import Container from '@material-ui/core/Container';
+import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import { actionLoadImages } from '../../containers/App/actions';
+import { connect } from 'react-redux';
+import { LinearProgress, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
     gridList: {
@@ -60,31 +23,91 @@ const useStyles = makeStyles(theme => ({
     },
     icon: {
         color: 'rgba(255, 255, 255, 0.54)',
+    },
+    loader: {
+        flexGrow: 1,
+        width: '700px',
+        margin: theme.spacing(5)
+    },
+    image: {
+        padding: theme.spacing(2),
+        margin: '0 auto 0',
+        display: 'block',
+        width: '75%'
     }
 }));
 
-export default function ImageFeed() {
+export function ImageFeed({dispatch, user, isLoading, isError, images}) {
     const classes = useStyles();
+    const [loaded, setLoaded] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
+    const [currImage, setImage] = React.useState({});
+
+    function handleClose() {
+        setOpen(false);
+    }
+
+    function onOpenDialogue(image) {
+            setImage(image);
+            setOpen(true);
+
+    }
+
+    useEffect(() => {
+        if (!loaded) {
+            dispatch(actionLoadImages({user: user}));   
+            setLoaded(true);
+        }
+    });
+
     return (
         <section>
-            <form>
-                Sorting to go here.
-            </form>
-            <GridList cols={3} cellHeight={350}>
-                {mockData.map(tile => (
-                    <GridListTile key={tile.img} cols={tile.cols || 1}>
-                        <img src={tile.img} alt={tile.title} />
+            {!isLoading && <GridList cols={3} cellHeight={350}>
+                {images && images.map(image => (
+                    <GridListTile key={image.created_on} cols={1}>
+                        <img src={image.image} alt={image.title} />
                         <GridListTileBar
-                            title={tile.title}
-                            subtitle={<span>by: {tile.author}</span>}
+                            title={image.title}
+                            subtitle={<span>{`By ${image.user_name}`}</span>}
                             actionIcon={
-                            <IconButton className={classes.icon}>
+                            <IconButton className={classes.icon} onClick={() => onOpenDialogue(image)}>
                                 <InfoIcon />
                             </IconButton>
                         }/>
                     </GridListTile>
                 ))}
-            </GridList>
+            </GridList> }
+             <Dialog fullScreen open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                    <AppBar>
+                    <Toolbar>
+                        <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="Close">
+                        <CloseIcon />
+                        </IconButton>
+                        <Typography variant="h6">
+                        Viewing image: {currImage.title}
+                        </Typography>
+                    </Toolbar>
+                    </AppBar>
+                     <DialogTitle id="form-dialog-title">{currImage.title}</DialogTitle>
+                     <Container>
+                         <Typography variant="h5">Description: {currImage.description}</Typography>
+                         <Typography variant="h5">Submitted by: {currImage.user_name}</Typography>
+                         <Typography gutterBottom>{`Submitted on ${(new Date(currImage.created_on).toLocaleDateString())} at ${(new Date(currImage.created_on).toLocaleTimeString())}`}</Typography>
+                         
+                         <Paper>
+                            <img className={classes.image} src={currImage.image} alt={currImage.title} />
+                         </Paper>
+                     </Container>
+            </Dialog> 
+            {isLoading && <div className={classes.loader}><LinearProgress variant="query" /></div>}
         </section>
     )
 }
+
+const mapStateToProps = state => ({
+    isLoading: state.appReducer.loading,
+    isError: state.appReducer.error,
+    images: state.appReducer.images
+});
+
+export default connect(mapStateToProps)(ImageFeed);

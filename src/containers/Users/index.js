@@ -21,7 +21,7 @@ export default function Users({match}) {
             <Route path={`${match.path}/:id`} component={User} />
             <Route
                 exact
-                path={match.path}
+                path='/'
                 component={NotFound}
             />
         </section>

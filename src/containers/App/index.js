@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { Container } from '@material-ui/core';
 
@@ -9,8 +9,20 @@ import Users from '../Users';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import Images from '../Images';
+import { connect } from 'react-redux';
+import {checkLogIn} from './actions';
   
-export default function App() {
+export function App({dispatch}) {
+    let loaded = false;
+
+    // Check login
+    useEffect(() => {
+        if (!loaded) {
+            setImmediate(() => dispatch(checkLogIn()), 1000);
+            loaded = true;
+        }
+    });
+
     return (
         <div>
             <Header />
@@ -26,3 +38,5 @@ export default function App() {
         </div>
     )
 }
+
+export default connect()(App)

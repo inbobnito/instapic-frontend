@@ -12,12 +12,12 @@ const useStyles = makeStyles(theme => ({
 export default function Hero() {
     const classes = useStyles();
     return (
-        <Container maxWidth="sm" className={classes.hero}>
+        <Container maxWidth="md" className={classes.hero}>
             <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
                 InstaPic
             </Typography>
             <Typography variant="h5" align="center" color="textSecondary" paragraph>
-                The latest memes.
+                Viewing all pictures.
             </Typography>
         </Container>
     )

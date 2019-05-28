@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from "react-router-dom";
-import { combineReducers, createStore } from 'redux';
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk';
 import { Provider } from 'react-redux';
 import * as serviceWorker from './serviceWorker';
 
@@ -11,11 +12,11 @@ import App from './containers/App';
 import appReducer from './containers/App/reducer';
 
 const rootReducer = combineReducers({
-    appReducer,
-  });
+    appReducer
+});
 
 const initialState = {};
-const store = createStore(rootReducer, initialState);
+const store = createStore(rootReducer, initialState, applyMiddleware(thunkMiddleware));
 
 ReactDOM.render(
     <Provider store={store}>

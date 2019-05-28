@@ -6,18 +6,30 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import { signInUser } from '../../containers/App/actions';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles(theme => ({
 }));
 
-export default function LoginForm() {
+export function LoginForm({dispatch}) {
     const classes = useStyles();
-
     const [open, setOpen] = React.useState(false);
+    let uname;
+    let pass;
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        dispatch(signInUser({user_name: uname, password: pass}));
+    }
+
+    function getPass(event) {
+        pass = event.target.value;
+    }
+
+    function getUserName(event) {
+        uname = event.target.value;
+    }
 
     function onOpenLoginDiaglogue() {
       setOpen(true);
@@ -34,20 +46,22 @@ export default function LoginForm() {
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Sign In</DialogTitle>
                 <DialogContent>
-                    <form className={classes.form} noValidate>
+                    <form className={classes.form} noValidate onSubmit={handleSubmit}>
                         <TextField
                             variant="outlined"
+                            onChange={getUserName}
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
+                            id="username"
+                            label="User name"
+                            name="username"
+                            autoComplete="username"
                             autoFocus
                         />
                         <TextField
                             variant="outlined"
+                            onChange={getPass}
                             margin="normal"
                             required
                             fullWidth
@@ -56,10 +70,6 @@ export default function LoginForm() {
                             type="password"
                             id="password"
                             autoComplete="current-password"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
                         />
                         <Button
                             type="submit"
@@ -81,3 +91,5 @@ export default function LoginForm() {
         </span>
     )
 }
+
+export default connect()(LoginForm);
