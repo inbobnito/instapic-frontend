@@ -2,7 +2,7 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-This project was based off FB's create react app as apart of following their tutorial. I haven't worked with React in two years and that was just a quick prototype. You can [view it here](https://github.com/dronesmith/Dronesmith-Ground-Control) Redux is new to me. Compared to Angular (2+), I found Redux's state management to be the most different from Angular. Closest analogue would be services but it's not really comparable. Material UI was a lot of fun to work with, especially compared to Bootstrap and Foundation. I used a lot of the [react boiler plate](https://github.com/react-boilerplate/react-boilerplate) project for scaffolding.
+This project was based off FB's create react app as apart of following their tutorial. I haven't worked with React in two years and that was just a quick prototype. You can [view it here](https://github.com/dronesmith/Dronesmith-Ground-Control). Redux is new to me. Compared to Angular (2+), I found Redux's state management to be the most different from Angular. Closest analogue would be services but it's not really comparable. Material UI was a lot of fun to work with, especially compared to Bootstrap and Foundation. I used a lot of the [react boiler plate](https://github.com/react-boilerplate/react-boilerplate) project for scaffolding.
 
 As with the backend, I didn't get the time to implement testing, unfortunately. I'd like to break out the actions and reducers as well now that I get the way Redux does things. 
 
