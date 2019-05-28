@@ -32,7 +32,7 @@ export function User({match, userNotFound}) {
             {userNotFound && <Typography variant="h4">User not found.</Typography>}
             </Container>
 
-            <ImageFeed user={match.params.id} />
+            {!userNotFound && <ImageFeed user={match.params.id} />}
         </section>
     );
 }

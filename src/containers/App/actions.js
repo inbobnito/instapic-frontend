@@ -18,27 +18,12 @@ const authHelper = new Auth();
 const API_URL = `https://limitless-spire-73807.herokuapp.com`;
 
 // Redux actions
-
-export function getUserInformation(username) {
-    return fetch(`${API_URL}/user/${username}`, {
-        mode: 'cors',
-        redirect: 'follow', 
-        referrer: 'no-referrer',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': "Bearer " + authHelper.getToken(),
-        }
-    }).then(response => {
-        console.log(response);
-    });
-}
-
 export function registerUser(data) {
     return dispatch => {
 
         dispatch(requestRegistration(data));
 
-        fetch(`${API_URL}/user/`, {
+        return fetch(`${API_URL}/user/`, {
                 method: 'POST',
                 mode: 'cors',
                 redirect: 'follow', 
@@ -173,16 +158,24 @@ export function fetchImagePreview(data) {
 
     return dispatch => {
         dispatch(requestImage());
-        let reader  = new FileReader();
-        
-        reader.onloadend = () => {
-            dispatch(({type: IMAGE_PREVIEW, imageData: reader.result, 
-                selectedFile: data.file.name, fileExt: data.file.type}))
-        }
 
-        if (data.file) {
-            reader.readAsDataURL(data.file); 
-        }
+        return new Promise((resolve, reject) => {
+            let reader  = new FileReader();
+        
+            reader.onloadend = () => {
+                dispatch(({type: IMAGE_PREVIEW, imageData: reader.result, 
+                    selectedFile: data.file.name, fileExt: data.file.type}));
+                return resolve({type: IMAGE_PREVIEW, imageData: reader.result, 
+                    selectedFile: data.file.name, fileExt: data.file.type});
+            }
+    
+            if (data.file) {
+                reader.readAsDataURL(data.file); 
+            } else {
+                return reject(new Error('No file'));
+            }
+        });
+       
     };
 }
 

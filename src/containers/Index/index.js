@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export function Index({isLoading}) {
+export function Index({isLoading, images}) {
     const classes = useStyles();
     const [user, setUser] = React.useState(null);
 
@@ -37,7 +37,7 @@ export function Index({isLoading}) {
     return (
         <section className={classes.root}>
             <Hero />
-            {!isLoading && <div className={classes.form}>
+            {images.length > 0 && !isLoading && <div className={classes.form}>
                 <TextField
                     onChange={handleUser}
                     id="standard-dense"
@@ -48,7 +48,6 @@ export function Index({isLoading}) {
                     <Link color="inherit" component={RouterLink} to={`/user/${user}`}>Search User</Link>
                 </Button>
             </div> }
-           
             <ImageFeed />
         </section>
     );
@@ -57,6 +56,7 @@ export function Index({isLoading}) {
 const mapStateToProps = state => ({
     isLoading: state.appReducer.loading,
     isError: state.appReducer.error,
+    images: state.appReducer.images
 });
 
 export default connect(mapStateToProps)(Index)

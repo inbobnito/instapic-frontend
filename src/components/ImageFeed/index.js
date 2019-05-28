@@ -70,8 +70,8 @@ export function ImageFeed({dispatch, user, isLoading, isError, images}) {
     return (
         <section>
             {!isLoading && <GridList cols={3} cellHeight={350}>
-                {images && images.map(image => (
-                    <GridListTile key={image.created_on} cols={1}>
+                {images && images.length > 0 && images.map(image => (
+                    <GridListTile key={image.created_on} cols={images.length <= 3 ? 3 - images.length : 1}>
                         <img src={image.image} alt={image.title} />
                         <GridListTileBar
                             title={image.title}
@@ -108,6 +108,7 @@ export function ImageFeed({dispatch, user, isLoading, isError, images}) {
                      </Container>
             </Dialog> 
             {isLoading && <div className={classes.loader}><LinearProgress variant="query" /></div>}
+            {!isLoading && images && images.length === 0 && <Typography className={classes.loader} align="center" variant="h6">No Images uploaded.</Typography>}
         </section>
     )
 }
